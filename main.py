@@ -402,7 +402,7 @@ def welcome():
 	created = relative_time(datetime.strptime(row.get("created"), "%Y-%m-%d %H:%M:%S"))
 	ip = row.get("ip")
 	return f"""
-		Welcome {username}, created {created}, IP {ip}
+		Welcome {username}, created {created}, IP at creation {ip}
 		<button onclick="document.cookie='user_token=';window.location.href='/'">Sign Out</button>
 	"""
 
@@ -441,4 +441,5 @@ if __name__ == "__main__":
 	)""")
 	db.commit()
 	db.close()
+
 	app.run()
