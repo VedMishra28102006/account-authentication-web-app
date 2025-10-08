@@ -1,6 +1,6 @@
 1. Description
 
-A task list or todo list web app
+An account authentification web app
 
 2. How to run
 
