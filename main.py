@@ -18,6 +18,41 @@ app.config["MAIL_PASSWORD"] = os.getenv("APP_PASSWORD")
 app.config["MAIL_DEFAULT_SENDER"] = os.getenv("GMAIL_ADDRESS")
 mail = Mail(app)
 
+db = sqlite3.connect("data.db")
+db.execute("""CREATE TABLE IF NOT EXISTS users (
+	id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+	username TEXT NOT NULL UNIQUE,
+	email TEXT NOT NULL UNIQUE,
+	password TEXT NOT NULL,
+	created DATETIME NOT NULL DEFAULT (datetime('now')),
+	token INTEGER NOT NULL UNIQUE,
+	ip TEXT NOT NULL
+)""")
+db.execute("""CREATE TABLE IF NOT EXISTS signins (
+	id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+	email TEXT NOT NULL,
+	otp INTEGER NOT NULL,
+	token INTEGER NOT NULL UNIQUE
+)""")
+db.execute("""CREATE TABLE IF NOT EXISTS signups (
+	id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+	username TEXT NOT NULL,
+	email TEXT NOT NULL,
+	password TEXT NOT NULL,
+	otp INTEGER NOT NULL,
+	token INTEGER NOT NULL UNIQUE,
+	ip TEXT NOT NULL
+)""")
+db.execute("""CREATE TABLE IF NOT EXISTS resets (
+	id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+	email TEXT NOT NULL,
+	password TEXT NOT NULL,
+	otp INTEGER NOT NULL,
+	token INTEGER NOT NULL UNIQUE
+)""")
+db.commit()
+db.close()
+
 def db_cleanup(table, token):
 	time.sleep(5*60)
 	db = sqlite3.connect("data.db")
@@ -407,39 +442,5 @@ def welcome():
 	"""
 
 if __name__ == "__main__":
-	db = sqlite3.connect("data.db")
-	db.execute("""CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY NOT NULL UNIQUE,
-		username TEXT NOT NULL UNIQUE,
-		email TEXT NOT NULL UNIQUE,
-		password TEXT NOT NULL,
-		created DATETIME NOT NULL DEFAULT (datetime('now')),
-		token INTEGER NOT NULL UNIQUE,
-		ip TEXT NOT NULL
-	)""")
-	db.execute("""CREATE TABLE IF NOT EXISTS signins (
-		id INTEGER PRIMARY KEY NOT NULL UNIQUE,
-		email TEXT NOT NULL,
-		otp INTEGER NOT NULL,
-		token INTEGER NOT NULL UNIQUE
-	)""")
-	db.execute("""CREATE TABLE IF NOT EXISTS signups (
-		id INTEGER PRIMARY KEY NOT NULL UNIQUE,
-		username TEXT NOT NULL,
-		email TEXT NOT NULL,
-		password TEXT NOT NULL,
-		otp INTEGER NOT NULL,
-		token INTEGER NOT NULL UNIQUE,
-		ip TEXT NOT NULL
-	)""")
-	db.execute("""CREATE TABLE IF NOT EXISTS resets (
-		id INTEGER PRIMARY KEY NOT NULL UNIQUE,
-		email TEXT NOT NULL,
-		password TEXT NOT NULL,
-		otp INTEGER NOT NULL,
-		token INTEGER NOT NULL UNIQUE
-	)""")
-	db.commit()
-	db.close()
-
 	app.run()
+
